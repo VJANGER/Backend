@@ -10,10 +10,8 @@ app.get('/products', (req, res) => {
 
   if (limit) {
     const limitedProducts = products.slice(0, parseInt(limit));
-    console.log(limitedProducts); // Agrega este console.log
     res.json(limitedProducts);
   } else {
-    console.log(products); // Agrega este console.log
     res.json(products);
   }
 });
