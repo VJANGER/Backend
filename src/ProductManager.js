@@ -1,35 +1,20 @@
 import fs from 'fs'
 
 export default class ProductManager {
-  constructor(path) {
-    this.path = path;
-    this.initializeFile();
+  constructor(filePath) {
+    this.filePath = filePath;
   }
 
-  initializeFile() {
-    if (!fs.existsSync(this.path)) {
-      fs.writeFileSync(this.path, '[]', 'utf-8');
-    }
-  }
-
-  getProducts(){
-    try {
-      const fileData = fs.readFileSync(this.path, 'utf-8');
-      return JSON.parse(fileData);
-    } catch (error) {
-      return [];
-    }
+  getProducts() {
+    const fileData = fs.readFileSync(this.filePath, 'utf8');
+    const products = JSON.parse(fileData);
+    return products;
   }
 
   addProduct(product) {
     const products = this.getProducts();
-    const codeExists = products.some((p) => p.code === product.code);
-    if (codeExists) {
-      throw new Error('El código está repetido');
-    }
-
-    const lastId = products.length > 0 ? Math.max(...products.map((p) => p.id)) : 0;
-    const newProduct = { id: lastId + 1, ...product };
+    const id = this.generateId();
+    const newProduct = { id, ...product };
     products.push(newProduct);
     this.saveProducts(products);
     return newProduct;
@@ -38,38 +23,44 @@ export default class ProductManager {
   getProductById(id) {
     const products = this.getProducts();
     const product = products.find((p) => p.id === id);
-    if (product) {
-      return product;
-    } else {
-      throw new Error('Producto no encontrado');
+    if (!product) {
+      throw new Error('Product not found');
     }
+    return product;
   }
 
   updateProduct(id, updatedFields) {
     const products = this.getProducts();
     const productIndex = products.findIndex((p) => p.id === id);
-    if (productIndex !== -1) {
-      const updatedProduct = { ...products[productIndex], ...updatedFields, id };
-      products[productIndex] = updatedProduct;
-      this.saveProducts(products);
-      return updatedProduct;
-    } else {
-      throw new Error('Producto no encontrado');
+    if (productIndex === -1) {
+      throw new Error('Product not found');
     }
+    const updatedProduct = { ...products[productIndex], ...updatedFields };
+    products[productIndex] = updatedProduct;
+    this.saveProducts(products);
+    return updatedProduct;
   }
 
   deleteProduct(id) {
     const products = this.getProducts();
-    const updatedProducts = products.filter((p) => p.id !== id);
-    if (updatedProducts.length === products.length) {
-      throw new Error('Producto no encontrado');
+    const productIndex = products.findIndex((p) => p.id === id);
+    if (productIndex === -1) {
+      throw new Error('Product not found');
     }
-    this.saveProducts(updatedProducts);
+    const deletedProduct = products.splice(productIndex, 1)[0];
+    this.saveProducts(products);
+    return deletedProduct;
+  }
+
+  generateId() {
+    const products = this.getProducts();
+    const maxId = products.reduce((max, product) => (product.id > max ? product.id : max), 0);
+    return maxId + 1;
   }
 
   saveProducts(products) {
-    const data = JSON.stringify(products, null, 2);
-    fs.writeFileSync(this.path, data, 'utf-8');
+    const fileData = JSON.stringify(products, null, 2);
+    fs.writeFileSync(this.filePath, fileData);
   }
 }
 

@@ -1,25 +1,27 @@
 import express from 'express';
-import ProductManager from './ProductManager.js';
+import ProductManager from './ProductManager.js'
 
 const app = express();
 const productManager = new ProductManager('products.json');
 
-
-app.get('/products', async (req, res) => {
+app.get('/products', (req, res) => {
   const { limit } = req.query;
-  const products = await productManager.getProducts();
+  const products = productManager.getProducts();
+
   if (limit) {
     const limitedProducts = products.slice(0, parseInt(limit));
+    console.log(limitedProducts); // Agrega este console.log
     res.json(limitedProducts);
   } else {
+    console.log(products); // Agrega este console.log
     res.json(products);
   }
 });
 
-app.get('/products/:pid', async (req, res) => {
+app.get('/products/:pid', (req, res) => {
   const { pid } = req.params;
   try {
-    const product = await productManager.getProductById(parseInt(pid));
+    const product = productManager.getProductById(parseInt(pid));
     res.json(product);
   } catch (error) {
     res.status(404).json({ error: 'Producto no encontrado' });
@@ -29,4 +31,3 @@ app.get('/products/:pid', async (req, res) => {
 app.listen(8080, () => {
   console.log('Servidor escuchando en el puerto 8080');
 });
-
