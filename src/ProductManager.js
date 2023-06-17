@@ -12,7 +12,7 @@ export default class ProductManager {
     }
   }
 
-  getProducts() {
+  getProducts(){
     try {
       const fileData = fs.readFileSync(this.path, 'utf-8');
       return JSON.parse(fileData);
@@ -73,47 +73,3 @@ export default class ProductManager {
   }
 }
 
-// // Ejemplo de uso
-// const productManager = new ProductManager('products.json');
-
-// console.log(productManager.getProducts()); // []
-
-// const addedProduct = productManager.addProduct({
-//   title: 'producto prueba',
-//   description: 'Este es un producto prueba',
-//   price: 200,
-//   thumbnail: 'Sin imagen',
-//   code: 'abc123',
-//   stock: 25,
-// });
-
-// console.log(addedProduct); // { id: 1, title: 'producto prueba', ... }
-
-// console.log(productManager.getProducts()); // [ { id: 1, title: 'producto prueba', ... } ]
-
-// const retrievedProduct = productManager.getProductById(1);
-// console.log(retrievedProduct); // { id: 1, title: 'producto prueba', ... }
-
-// try {
-//   productManager.getProductById(2); // Error: Producto no encontrado
-// } catch (error) {
-//   console.error(error.message);
-// }
-
-// const updatedProduct = productManager.updateProduct(1, { price: 250 });
-// console.log(updatedProduct); // { id: 1, title: 'producto prueba', price: 250, ... }
-
-// try {
-//   productManager.updateProduct(2, { price: 300 }); // Error: Producto no encontrado
-// } catch (error) {
-//   console.error(error.message);
-// }
-
-// productManager.deleteProduct(1);
-// console.log(productManager.getProducts()); // []
-
-// try {
-//   productManager.deleteProduct(2); // Error: Producto no encontrado
-// } catch (error) {
-//   console.error(error.message);
-// }

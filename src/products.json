@@ -5,7 +5,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "1",
         "stock": 25
       },
       {
@@ -14,7 +14,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "2",
         "stock": 25
       },
       {
@@ -23,7 +23,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "3",
         "stock": 25
       },
       {
@@ -32,7 +32,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "4",
         "stock": 25
       },
       {
@@ -41,7 +41,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "5",
         "stock": 25
       },
       {
@@ -50,7 +50,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "6",
         "stock": 25
       },
       {
@@ -59,7 +59,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "7",
         "stock": 25
       },
       {
@@ -68,7 +68,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "8",
         "stock": 25
       },
       {
@@ -77,7 +77,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "9",
         "stock": 25
       },
       {
@@ -86,7 +86,7 @@
         "description": "Este es un producto prueba",
         "price": 200,
         "thumbnail": "Sin imagen",
-        "code": "abc123",
+        "code": "10",
         "stock": 25
       }
   ]
