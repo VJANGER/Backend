@@ -1,92 +1,92 @@
 [
   {
     "id": 1,
-    "title": "Producto 1",
-    "description": "Descripción del Producto 1",
-    "price": 10.99,
-    "thumbnail": "/img/product1.jpg",
-    "code": "ABC123",
-    "stock": 50
+    "title": "Vino tinto",
+    "description": "Vino tinto de uvas seleccionadas",
+    "price": 9.99,
+    "thumbnail": "https://cdn.example.com/vino_tinto.jpg",
+    "code": "VT001",
+    "stock": 20
   },
   {
     "id": 2,
-    "title": "Producto 2",
-    "description": "Descripción del Producto 2",
-    "price": 19.99,
-    "thumbnail": "/img/product2.jpg",
-    "code": "DEF456",
+    "title": "Cerveza IPA",
+    "description": "Cerveza India Pale Ale de sabor amargo y aroma intenso",
+    "price": 3.49,
+    "thumbnail": "https://cdn.example.com/ipa.jpg",
+    "code": "IPA002",
     "stock": 30
   },
   {
     "id": 3,
-    "title": "Producto 3",
-    "description": "Descripción del Producto 3",
-    "price": 15.50,
-    "thumbnail": "/img/product3.jpg",
-    "code": "GHI789",
-    "stock": 20
+    "title": "Whisky escocés",
+    "description": "Whisky escocés de malta envejecido en barricas de roble",
+    "price": 49.99,
+    "thumbnail": "https://cdn.example.com/whisky.jpg",
+    "code": "WHISKY003",
+    "stock": 10
   },
   {
     "id": 4,
-    "title": "Producto 4",
-    "description": "Descripción del Producto 4",
-    "price": 8.75,
-    "thumbnail": "/img/product4.jpg",
-    "code": "JKL012",
+    "title": "Ron añejo",
+    "description": "Ron añejo de caña de azúcar envejecido en barriles de roble",
+    "price": 29.99,
+    "thumbnail": "https://cdn.example.com/ron.jpg",
+    "code": "RON004",
     "stock": 15
   },
   {
     "id": 5,
-    "title": "Producto 5",
-    "description": "Descripción del Producto 5",
-    "price": 12.99,
-    "thumbnail": "/img/product5.jpg",
-    "code": "MNO345",
-    "stock": 10
-  },
-  {
-    "id": 6,
-    "title": "Producto 6",
-    "description": "Descripción del Producto 6",
-    "price": 5.99,
-    "thumbnail": "/img/product6.jpg",
-    "code": "PQR678",
+    "title": "Gin premium",
+    "description": "Gin destilado con botánicos seleccionados",
+    "price": 24.99,
+    "thumbnail": "https://cdn.example.com/gin.jpg",
+    "code": "GIN005",
     "stock": 25
   },
   {
+    "id": 6,
+    "title": "Vodka de trigo",
+    "description": "Vodka destilado a partir de trigo de alta calidad",
+    "price": 19.99,
+    "thumbnail": "https://cdn.example.com/vodka.jpg",
+    "code": "VODKA006",
+    "stock": 20
+  },
+  {
     "id": 7,
-    "title": "Producto 7",
-    "description": "Descripción del Producto 7",
-    "price": 9.99,
-    "thumbnail": "/img/product7.jpg",
-    "code": "STU901",
-    "stock": 35
+    "title": "Tequila reposado",
+    "description": "Tequila reposado añejado en barricas de roble",
+    "price": 39.99,
+    "thumbnail": "https://cdn.example.com/tequila.jpg",
+    "code": "TEQUILA007",
+    "stock": 8
   },
   {
     "id": 8,
-    "title": "Producto 8",
-    "description": "Descripción del Producto 8",
-    "price": 14.50,
-    "thumbnail": "/img/product8.jpg",
-    "code": "VWX234",
-    "stock": 40
+    "title": "Brandy de Jerez",
+    "description": "Brandy de Jerez envejecido en solera",
+    "price": 34.99,
+    "thumbnail": "https://cdn.example.com/brandy.jpg",
+    "code": "BRANDY008",
+    "stock": 12
   },
   {
     "id": 9,
-    "title": "Producto 9",
-    "description": "Descripción del Producto 9",
-    "price": 7.25,
-    "thumbnail": "/img/product9.jpg",
-    "code": "YZA567",
-    "stock": 5
+    "title": "Cava",
+    "description": "Vino espumoso elaborado mediante el método tradicional",
+    "price": 12.99,
+    "thumbnail": "https://cdn.example.com/cava.jpg",
+    "code": "CAVA009",
+    "stock": 18
   },
   {
     "id": 10,
-    "title": "Producto 10",
-    "description": "Descripción del Producto 10",
-    "price": 11.99,
-    "thumbnail": "/img/product10.jpg",
-    "code": "BCD890",
-    "stock": 12
+    "title": "Licor de café",
+    "description": "Licor con sabor a café elaborado con ingredientes naturales",
+    "price": 14.99,
+    "thumbnail": "https://cdn.example.com/licor_cafe.jpg",
+    "code": "LICOR010",
+    "stock": 15
   }
 ]

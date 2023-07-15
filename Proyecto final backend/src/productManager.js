@@ -1,33 +1,7 @@
-import { promises as fs } from 'fs';
-import Product from './Product.js';
+import ProductModel from '../dao/models/productModel.js';
 
 class ProductManager {
-  constructor(filePath) {
-    this.filePath = filePath;
-    this.products = [];
-    this.loadProducts();
-  }
-
-  async loadProducts() {
-    try {
-      const data = await fs.readFile(this.filePath, 'utf8');
-      this.products = JSON.parse(data);
-    } catch (error) {
-      this.products = [];
-    }
-  }
-
-  async saveProducts() {
-    await fs.writeFile(this.filePath, JSON.stringify(this.products, null, 2), 'utf8');
-  }
-
-  getNextId() {
-    const ids = this.products.map((product) => product.id);
-    const maxId = Math.max(...ids);
-    return maxId >= 0 ? maxId + 1 : 0;
-  }
-
-  addProduct(productData) {
+  async addProduct(productData) {
     try {
       const { title, category, image, seller } = productData;
       
@@ -47,42 +21,58 @@ class ProductManager {
         throw new Error('Seller information is required.');
       }
 
-      const product = new Product(title, category, image, seller);
+      const product = new ProductModel({
+        title,
+        category,
+        image,
+        seller,
+      });
 
-      const newProduct = {
-        id: this.getNextId(),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        ...product,
-      };
+      const newProduct = await product.save();
 
-      this.products.push(newProduct);
-      this.saveProducts();
-
-      return newProduct.id;
+      return newProduct._id;
     } catch (error) {
       throw new Error(`Failed to add product: ${error.message}`);
     }
   }
 
-  getProducts(limit) {
-    if (limit && limit > 0) {
-      return this.products.slice(0, limit);
-    }
-    return this.products;
-  }
-
-  getProductById(id) {
-    const product = this.products.find((p) => p.id === id);
-    if (!product) {
-      throw new Error('Product not found.');
-    }
-    return product;
-  }
-
-  updateProduct(id, updatedFields) {
+  async getProducts(limit) {
     try {
-      const product = this.getProductById(id);
+      let query = ProductModel.find();
+
+      if (limit && limit > 0) {
+        query = query.limit(limit);
+      }
+
+      const products = await query.exec();
+
+      return products;
+    } catch (error) {
+      throw new Error(`Failed to get products: ${error.message}`);
+    }
+  }
+
+  async getProductById(id) {
+    try {
+      const product = await ProductModel.findById(id).exec();
+
+      if (!product) {
+        throw new Error('Product not found.');
+      }
+
+      return product;
+    } catch (error) {
+      throw new Error(`Failed to get product: ${error.message}`);
+    }
+  }
+
+  async updateProduct(id, updatedFields) {
+    try {
+      const product = await ProductModel.findById(id).exec();
+
+      if (!product) {
+        throw new Error('Product not found.');
+      }
 
       const { title, category, image, seller } = updatedFields;
       
@@ -90,22 +80,23 @@ class ProductManager {
         throw new Error('No fields to update.');
       }
 
-      const updatedProduct = {
-        ...product,
-        title: title || product.title,
-        category: category || product.category,
-        image: image || product.image,
-        seller: {
-          ...product.seller,
-          ...(seller || {}),
-        },
-        updatedAt: new Date().toISOString(),
-      };
+      if (title) {
+        product.title = title;
+      }
 
-      const index = this.products.findIndex((p) => p.id === id);
-      this.products[index] = updatedProduct;
+      if (category) {
+        product.category = category;
+      }
 
-      this.saveProducts();
+      if (image) {
+        product.image = image;
+      }
+
+      if (seller) {
+        product.seller = seller;
+      }
+
+      const updatedProduct = await product.save();
 
       return updatedProduct;
     } catch (error) {
@@ -113,30 +104,35 @@ class ProductManager {
     }
   }
 
-  deleteProduct(id) {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index === -1) {
-      throw new Error('Product not found.');
+  async deleteProduct(id) {
+    try {
+      const product = await ProductModel.findByIdAndRemove(id).exec();
+
+      if (!product) {
+        throw new Error('Product not found.');
+      }
+
+      return product;
+    } catch (error) {
+      throw new Error(`Failed to delete product: ${error.message}`);
     }
-
-    const deletedProduct = this.products[index];
-    this.products.splice(index, 1);
-    this.saveProducts();
-
-    return deletedProduct;
   }
 
-  searchProducts(query) {
-    const results = this.products.filter((product) => {
-      const { title, category, seller } = product;
-      return (
-        title.toLowerCase().includes(query.toLowerCase()) ||
-        category.toLowerCase().includes(query.toLowerCase()) ||
-        seller.name.toLowerCase().includes(query.toLowerCase())
-      );
-    });
+  async searchProducts(query) {
+    try {
+      const regex = new RegExp(query, 'i');
+      const products = await ProductModel.find({
+        $or: [
+          { title: regex },
+          { category: regex },
+          { 'seller.name': regex },
+        ],
+      }).exec();
 
-    return results;
+      return products;
+    } catch (error) {
+      throw new Error(`Failed to search products: ${error.message}`);
+    }
   }
 }
 

@@ -1,16 +1,22 @@
 import express from 'express';
-import exphbs from 'express-handlebars';
+import { create as exphbsCreate } from 'express-handlebars';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import ProductManager from './ProductManager.js';
+import connectDB from './db.js';
+
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+connectDB();
+
 const productManager = new ProductManager('products.json');
 
-app.engine('handlebars', exphbs());
+const exphbs = exphbsCreate();
+
+app.engine('handlebars', exphbs.engine);
 app.set('view engine', 'handlebars');
 
 app.get('/', (req, res) => {
