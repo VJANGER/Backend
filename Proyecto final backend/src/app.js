@@ -1,43 +1,29 @@
 import express from 'express';
+import exphbs from 'express-handlebars';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import ProductManager from './ProductManager.js';
 
 const app = express();
-const port = 8080;
+const server = createServer(app);
+const io = new Server(server);
 
 const productManager = new ProductManager('products.json');
 
-app.use(express.json());
+app.engine('handlebars', exphbs());
+app.set('view engine', 'handlebars');
 
-app.get('/products', (req, res) => {
-  const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
-  const products = productManager.getProducts(limit);
-  res.json(products);
-});
-
-app.get('/products/:pid', (req, res) => {
-  const productId = parseInt(req.params.pid);
-  try {
-    const product = productManager.getProductById(productId);
-    res.json(product);
-  } catch (error) {
-    res.status(404).json({ error: 'Product not found' });
-  }
+app.get('/', (req, res) => {
+  const products = productManager.getProducts();
+  res.render('index', { products });
 });
 
 app.post('/products', (req, res) => {
   try {
     const productId = productManager.addProduct(req.body);
-    res.json({ id: productId });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.put('/products/:pid', (req, res) => {
-  const productId = parseInt(req.params.pid);
-  try {
-    const updatedProduct = productManager.updateProduct(productId, req.body);
-    res.json(updatedProduct);
+    const products = productManager.getProducts();
+    io.emit('productsUpdated', products);
+    res.redirect('/');
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -46,18 +32,19 @@ app.put('/products/:pid', (req, res) => {
 app.delete('/products/:pid', (req, res) => {
   const productId = parseInt(req.params.pid);
   try {
-    const deletedProduct = productManager.deleteProduct(productId);
-    res.json(deletedProduct);
+    productManager.deleteProduct(productId);
+    const products = productManager.getProducts();
+    io.emit('productsUpdated', products);
+    res.redirect('/');
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal Server Error' });
+io.on('connection', (socket) => {
+  console.log('Client connected');
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+server.listen(8080, () => {
+  console.log('Server running on port 8080');
 });

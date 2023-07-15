@@ -27,29 +27,37 @@ class ProductManager {
     return maxId >= 0 ? maxId + 1 : 0;
   }
 
-  async addProduct(productData) {
+  addProduct(productData) {
     try {
-      const product = new Product(
-        productData.title,
-        productData.description,
-        productData.price,
-        productData.thumbnail,
-        productData.code,
-        productData.stock
-      );
-
-      const existingProduct = this.products.find((p) => p.code === product.code);
-      if (existingProduct) {
-        throw new Error('Product with the same code already exists.');
+      const { title, category, image, seller } = productData;
+      
+      if (!title) {
+        throw new Error('Title is required.');
       }
+
+      if (!category) {
+        throw new Error('Category is required.');
+      }
+
+      if (!image) {
+        throw new Error('Image URL is required.');
+      }
+
+      if (!seller || !seller.name || !seller.email) {
+        throw new Error('Seller information is required.');
+      }
+
+      const product = new Product(title, category, image, seller);
 
       const newProduct = {
         id: this.getNextId(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         ...product,
       };
 
       this.products.push(newProduct);
-      await this.saveProducts();
+      this.saveProducts();
 
       return newProduct.id;
     } catch (error) {
@@ -72,34 +80,40 @@ class ProductManager {
     return product;
   }
 
-  async updateProduct(id, updatedFields) {
+  updateProduct(id, updatedFields) {
     try {
       const product = this.getProductById(id);
 
-      const updatedProduct = new Product(
-        updatedFields.title || product.title,
-        updatedFields.description || product.description,
-        updatedFields.price || product.price,
-        updatedFields.thumbnail || product.thumbnail,
-        updatedFields.code || product.code,
-        updatedFields.stock || product.stock
-      );
+      const { title, category, image, seller } = updatedFields;
+      
+      if (!title && !category && !image && !seller) {
+        throw new Error('No fields to update.');
+      }
 
-      const index = this.products.findIndex((p) => p.id === id);
-      this.products[index] = {
-        id,
-        ...updatedProduct,
+      const updatedProduct = {
+        ...product,
+        title: title || product.title,
+        category: category || product.category,
+        image: image || product.image,
+        seller: {
+          ...product.seller,
+          ...(seller || {}),
+        },
+        updatedAt: new Date().toISOString(),
       };
 
-      await this.saveProducts();
+      const index = this.products.findIndex((p) => p.id === id);
+      this.products[index] = updatedProduct;
 
-      return this.products[index];
+      this.saveProducts();
+
+      return updatedProduct;
     } catch (error) {
       throw new Error(`Failed to update product: ${error.message}`);
     }
   }
 
-  async deleteProduct(id) {
+  deleteProduct(id) {
     const index = this.products.findIndex((p) => p.id === id);
     if (index === -1) {
       throw new Error('Product not found.');
@@ -107,9 +121,22 @@ class ProductManager {
 
     const deletedProduct = this.products[index];
     this.products.splice(index, 1);
-    await this.saveProducts();
+    this.saveProducts();
 
     return deletedProduct;
+  }
+
+  searchProducts(query) {
+    const results = this.products.filter((product) => {
+      const { title, category, seller } = product;
+      return (
+        title.toLowerCase().includes(query.toLowerCase()) ||
+        category.toLowerCase().includes(query.toLowerCase()) ||
+        seller.name.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+
+    return results;
   }
 }
 
