@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Products</title>
+
+</head>
+<body>
+    <h1>Products</h1>
+  <ul>
+    {{#each products}}
+      <li>
+        <h2>{{title}}</h2>
+        <p>{{description}}</p>
+        <p>Price: {{price}}</p>
+        <p>Category: {{category}}</p>
+        <p>Availability: {{availability}}</p>
+        <img src="{{thumbnail}}" alt="{{title}}" width="100" height="100">
+        <button onclick="addToCart('{{_id}}')">Add to Cart</button>
+      </li>
+    {{/each}}
+  </ul>
+
+  <script>
+    function addToCart(productId) {
+      // Implementar la lógica para agregar el producto al carrito
+      console.log('Add to Cart:', productId);
+    }
+  </script>
+</body>
+</html>
+
