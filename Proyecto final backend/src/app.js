@@ -1,5 +1,6 @@
 import express from 'express';
 import { create as exphbsCreate } from 'express-handlebars';
+import session from 'express-session';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import ProductManager from './ProductManager.js';
@@ -54,3 +55,8 @@ io.on('connection', (socket) => {
 server.listen(8080, () => {
   console.log('Server running on port 8080');
 });
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+}));
