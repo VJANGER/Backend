@@ -4,12 +4,10 @@ export const addProduct = async (req, res) => {
   try {
     const product = req.body;
 
-    // Validaciones del producto
     if (!product.title || !product.description || !product.price || !product.thumbnail || !product.code || !product.stock || !product.category) {
       return res.status(400).json({ status: 'error', message: 'All fields are required' });
     }
 
-    // Crear nuevo producto en la base de datos
     const newProduct = await ProductModel.create(product);
 
     res.json({ status: 'success', payload: newProduct });
@@ -56,4 +54,14 @@ export const getProducts = async (req, res) => {
       res.status(500).json({ status: 'error', message: error.message });
     }
   };
-  
+
+  const productDao = require('../dao/productDao');
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await productDao.getAllProducts();
+    res.render('productView', { products });
+  } catch (error) {
+    res.status(500).send('Error fetching products');
+  }
+};
