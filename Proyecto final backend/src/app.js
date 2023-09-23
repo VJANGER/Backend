@@ -1,4 +1,4 @@
-import express from 'express';
+import express from require('express');
 import { create as exphbsCreate } from 'express-handlebars';
 import session from 'express-session';
 import { createServer } from 'http';
@@ -106,6 +106,157 @@ passport.use(new GitHubStrategy({
     return done(error);
   }
 }));
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
+
+app.post('/register', (req, res) => {
+  const { username, password } = req.body;
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    if (err) throw err;
+    const newUser = new User({ username, password: hash });
+    newUser.save((err, user) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Error al registrar el usuario');
+      } else {
+        res.send('Usuario registrado con éxito');
+      }
+    });
+  });
+});
+
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/profile',
+  failureRedirect: '/login',
+  failureFlash: true
+}));
+
+app.get('/profile', isAuthenticated, (req, res) => {
+  res.send(`Bienvenido, ${req.user.username}!`);
+});
+
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwt = require('jsonwebtoken');
+
+const secretKey = 'your-secret-key';
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: secretKey,
+};
+passport.use(
+  new LocalStrategy((username, password, done) => {
+    User.findOne({ username }, (err, user) => {
+      if (err) return done(err);
+      if (!user) return done(null, false);
+      if (!user.validPassword(password)) return done(null, false);
+
+      // Comprobar si el usuario es un administrador
+      if (user.isAdmin) {
+        user.role = 'admin';
+      } else {
+        user.role = 'usuario';
+      }
+
+      return done(null, user);
+    });
+  })
+);
+passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
+  User.findById(jwtPayload.sub, (err, user) => {
+    if (err) {
+      return done(err, false);
+    }
+    if (user) {
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  });
+}));
+function authenticateJWT(req, res, next) {
+  passport.authenticate('jwt', { session: false }, (err, user) => {
+    if (err) return res.sendStatus(403);
+    if (!user) return res.sendStatus(401);
+    next();
+  })(req, res, next);
+}
+app.get('/current', authenticateJWT, (req, res) => {
+  res.json({ user: req.user });
+});
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+
+  if (userIsValid) {
+    const token = jwt.sign({ sub: user._id }, secretKey, { expiresIn: '1h' });
+    res.json({ token });
+  } else {
+    res.status(401).json({ message: 'Credenciales inválidas' });
+  }
+});
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+mongoose.connect('mongodb://localhost:27017/ecommerce', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+app.use(bodyParser.json());
+
+const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const purchaseRoutes = require('./routes/purchaseRoutes'); 
+
+app.use('/products', productRoutes);
+app.use('/carts', cartRoutes);
+app.use('/purchase', purchaseRoutes); 
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+const { generateMockProducts } = require('./mocking');
+const { handleCustomError } = require('./errorHandler');
+
+app.get('/mockingproducts', (req, res) => {
+  const mockProducts = generateMockProducts();
+  res.json(mockProducts);
+});
+
+app.get('/example', (req, res, next) => {
+  const isSomethingWrong = true;
+  if (isSomethingWrong) {
+    next(handleCustomError('INVALID_PRODUCT_DATA'));
+  } else {
+    res.send('Proceso exitoso');
+  }
+});
