@@ -260,3 +260,27 @@ app.get('/example', (req, res, next) => {
     res.send('Proceso exitoso');
   }
 });
+
+const { developmentLogger, productionLogger } = require('./logger');
+
+app.get('/loggerTest', (req, res) => {
+  developmentLogger.debug('Mensaje de depuración');
+  developmentLogger.info('Mensaje de información');
+  developmentLogger.warn('Mensaje de advertencia');
+  developmentLogger.error('Mensaje de error');
+  developmentLogger.fatal('Mensaje fatal');
+  
+  // Para pruebas en producción
+  productionLogger.debug('Mensaje de depuración');
+  productionLogger.info('Mensaje de información');
+  productionLogger.warn('Mensaje de advertencia');
+  productionLogger.error('Mensaje de error');
+  productionLogger.fatal('Mensaje fatal');
+
+  res.send('Logs generados. Verifique la consola o el archivo de registro.');
+});
+
+
+
+
+
