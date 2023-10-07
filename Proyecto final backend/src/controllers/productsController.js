@@ -65,3 +65,47 @@ exports.getAllProducts = async (req, res) => {
     res.status(500).send('Error fetching products');
   }
 };
+
+// productController.js
+
+const Product = require('../models/productModel');
+
+exports.createProduct = async (req, res) => {
+  try {
+    const currentUser = req.user;
+
+    const newProduct = new Product({
+      owner: currentUser._id, 
+    });
+
+    await newProduct.save();
+
+    res.status(201).json({ message: 'Producto creado con éxito.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al crear el producto.' });
+  }
+};
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const userId = req.user._id;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado.' });
+    }
+
+    if (req.user.role === 'admin' || (req.user.role === 'premium' && product.owner.equals(userId))) {
+      await product.remove();
+      return res.json({ message: 'Producto eliminado con éxito.' });
+    } else {
+      return res.status(403).json({ error: 'No tienes permisos para eliminar este producto.' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al eliminar el producto.' });
+  }
+};
+
