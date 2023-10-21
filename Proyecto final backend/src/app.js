@@ -10,6 +10,38 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+const express = require('express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
+
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'API de Mi E-commerce',
+      version: '1.0.0',
+      description: 'Documentación de la API de Mi E-commerce',
+    },
+  },
+  apis: ['./routes/*.js'],
+};
+
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+
+app.use('/api/products', require('./routes/products'));
+app.use('/api/cart', require('./routes/cart'));
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor en ejecución en el puerto ${PORT}`);
+});
+
+
+
+
 connectDB();
 
 const productManager = new ProductManager('products.json');
@@ -269,8 +301,6 @@ app.get('/loggerTest', (req, res) => {
   developmentLogger.warn('Mensaje de advertencia');
   developmentLogger.error('Mensaje de error');
   developmentLogger.fatal('Mensaje fatal');
-  
-  // Para pruebas en producción
   productionLogger.debug('Mensaje de depuración');
   productionLogger.info('Mensaje de información');
   productionLogger.warn('Mensaje de advertencia');

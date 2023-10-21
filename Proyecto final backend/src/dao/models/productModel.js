@@ -1,3 +1,30 @@
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: El título del producto.
+ *         category:
+ *           type: string
+ *           description: La categoría a la que pertenece el producto.
+ *         image:
+ *           type: string
+ *           description: La URL de la imagen del producto.
+ *         price:
+ *           type: number
+ *           description: El precio del producto.
+ *         stock:
+ *           type: number
+ *           description: La cantidad en stock del producto.
+ *         owner:
+ *           type: string
+ *           description: El ID del usuario propietario del producto.
+ */
+
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
