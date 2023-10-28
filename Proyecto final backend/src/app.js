@@ -311,6 +311,7 @@ app.get('/loggerTest', (req, res) => {
 });
 
 
-
+const userRouter = require('./routes/userRouter');
+app.use('/api/users', userRouter);
 
 
