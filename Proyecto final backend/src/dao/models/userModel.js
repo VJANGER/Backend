@@ -7,15 +7,8 @@ const userSchema = new mongoose.Schema({
   age: { type: Number, required: true },
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
-  documents: [
-    {
-      name: String,
-      reference: String,
-    },
-  ],
-  last_connection: {
-    type: Date,
-  },
+  documents: [documentSchema],
+  last_connection: {type: Date, default: Date.now},
 });
 
 const UserModel = mongoose.model('User', userSchema);

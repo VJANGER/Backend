@@ -1,4 +1,5 @@
 import ProductModel from '../models/productModel.js';
+const nodemailer = require('nodemailer');
 
 export const addProduct = async (req, res) => {
   try {
@@ -66,8 +67,6 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// productController.js
-
 const Product = require('../models/productModel');
 
 exports.createProduct = async (req, res) => {
@@ -107,5 +106,46 @@ exports.deleteProduct = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Error al eliminar el producto.' });
   }
+};
+
+const ProductModel = require('../models/productModel');
+
+const sendEmail = async (to, subject, text) => {
+  const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+          user: 'tuCorreo@gmail.com',
+          pass: 'tuContraseña',
+      },
+  });
+
+  const mailOptions = {
+      from: 'tuCorreo@gmail.com',
+      to,
+      subject,
+      text,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.pid;
+        const product = await ProductModel.findById(productId);
+
+        if (product.owner && req.user.role === 'premium') {
+          const ownerEmail = 'correoDelPropietario@ejemplo.com';
+          const emailSubject = 'Producto Eliminado';
+          const emailText = `Estimado usuario premium, tu producto "${product.title}" ha sido eliminado.`;
+
+          await sendEmail(ownerEmail, emailSubject, emailText);        }
+
+        await ProductModel.findByIdAndRemove(productId);
+        res.redirect('/products');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error deleting product');
+    }
 };
 

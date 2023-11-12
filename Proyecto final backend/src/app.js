@@ -315,3 +315,7 @@ const userRouter = require('./routes/userRouter');
 app.use('/api/users', userRouter);
 
 
+app.use('/uploads', express.static('uploads'))
+
+const adminUserRoutes = require('./routes/adminUserRoutes');
+app.use('/admin/users', adminUserRoutes);
